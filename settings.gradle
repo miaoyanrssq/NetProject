@@ -1,0 +1,3 @@
+rootProject.name='NetProject'
+include ':app'
+include ':net'
