@@ -36,7 +36,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-import java.lang.StringBuilder
 
 class KTHttp private constructor(){
     companion object {
@@ -81,13 +80,17 @@ class KTHttp private constructor(){
      * 设置错误指令，默认不处理
      */
     private var error = "网络链接失效，请检查网络连接"
+    /**
+     * 是否设置BaseResponse，如果设置了，回调会自动解析Base层
+     */
+    private var isNeedBase = false
 
 
     /**
      * 设置获取的okhttpclient
      */
     fun setClientType(@Client type: String) = apply {
-        clientNetType = type
+        clientType = type
     }
 
     /**
@@ -95,6 +98,13 @@ class KTHttp private constructor(){
      */
     fun setNetClientType(@NetClientType type: String) = apply {
         clientNetType = type
+    }
+
+    /**
+     * 设置response的第一层通用解析
+     */
+    fun isNeedBaseResponse(need: Boolean) = apply {
+        isNeedBase = need
     }
 
     /**
@@ -377,45 +387,45 @@ class KTHttp private constructor(){
 
         ////////////////////////////////请求返回 String 数据////////////////////////////////////////
         fun getString(callback: StringCallback){
-            requestInit(data, GET)?.enqueue(KTStringCallback(callback, CallbackNeed(data.flag, error)))
+            requestInit(data, GET)?.enqueue(KTStringCallback(callback, CallbackNeed(data.flag, error, false)))
         }
         fun postString(callback: StringCallback) {
-            requestInit(data, POST_FORM)?.enqueue(KTStringCallback(callback, CallbackNeed(data.flag, error)))
+            requestInit(data, POST_FORM)?.enqueue(KTStringCallback(callback, CallbackNeed(data.flag, error, false)))
         }
 
         fun postStringJson(callback: StringCallback) {
-            requestInit(data, POST_JSON)?.enqueue(KTStringCallback(callback, CallbackNeed(data.flag, error)))
+            requestInit(data, POST_JSON)?.enqueue(KTStringCallback(callback, CallbackNeed(data.flag, error, false)))
         }
 
         fun postStringJson(json: String, callback: StringCallback) {
             data.json = json
-            requestInit(data, POST_JSON)?.enqueue(KTStringCallback(callback, CallbackNeed(data.flag, error)))
+            requestInit(data, POST_JSON)?.enqueue(KTStringCallback(callback, CallbackNeed(data.flag, error, false)))
         }
 
         ////////////////////////////////////////////普通请求///////////////////////////////////////////////////////
 
         fun <T> get(callback: CallbackRule<T>) {
-            requestInit(data, GET)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error)))
+            requestInit(data, GET)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, isNeedBase)))
         }
 
         fun <T> post(callback: CallbackRule<T>) {
-            requestInit(data, POST_FORM)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error)))
+            requestInit(data, POST_FORM)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, isNeedBase)))
         }
 
         fun <T> postJson(callback: CallbackRule<T>) {
-            requestInit(data, POST_JSON)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error)))
+            requestInit(data, POST_JSON)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, isNeedBase)))
         }
 
         fun <T> postJson(json: String, callback: CallbackRule<T>) {
             data.json = json
-            requestInit(data, POST_JSON)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error)))
+            requestInit(data, POST_JSON)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, isNeedBase)))
         }
 
         /**
          * 直传文件
          */
         fun <T> postFile(callback: CallbackRule<T>) {
-            requestInit(data, FILE_UPLOAD)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error)))
+            requestInit(data, FILE_UPLOAD)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, false)))
 
         }
 

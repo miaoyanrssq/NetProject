@@ -1,5 +1,6 @@
 package cn.zgy.net.callback
 
+import com.google.gson.reflect.TypeToken
 import com.stormkid.okhttpkt.rule.CallbackRule
 import com.stormkid.okhttpkt.utils.CallbackNeed
 import com.stormkid.okhttpkt.utils.GsonFactory
@@ -12,6 +13,7 @@ import okhttp3.Response
 import java.io.IOException
 import java.lang.reflect.ParameterizedType
 
+
 /**
  *
  * @Description:    请求回调处理
@@ -20,7 +22,7 @@ import java.lang.reflect.ParameterizedType
  * @Version:        1.0
  */
 
-class KTCallback<T>(private val callbackRule: CallbackRule<T>, private val need: CallbackNeed) :
+open class KTCallback<T>(private val callbackRule: CallbackRule<T>, private val need: CallbackNeed) :
     Callback {
     override fun onFailure(call: Call, e: IOException) {
         CoroutineScope(Dispatchers.Main).launch { callbackRule.onFailed(need.err_msg) }
@@ -38,15 +40,37 @@ class KTCallback<T>(private val callbackRule: CallbackRule<T>, private val need:
             } else {
                 val body = response.body?.string() ?: ""
                 try {
-                    val interfacesTypes = callbackRule.javaClass.genericInterfaces[0]
-                    val resultType = (interfacesTypes as ParameterizedType).actualTypeArguments
-                    val result = GsonFactory.format<T>(body, resultType[0])
-                    CoroutineScope(Dispatchers.Main).launch{
-                        callbackRule.onSuccess(
-                            result,
-                            need.flag
-                        )
 
+                    if(!need.needBase) {
+                        val interfacesTypes = callbackRule.javaClass.genericInterfaces[0]
+                        val resultType = (interfacesTypes as ParameterizedType).actualTypeArguments
+                        val result = GsonFactory.format<T>(body, resultType[0])
+                        CoroutineScope(Dispatchers.Main).launch {
+                            callbackRule.onSuccess(
+                                result,
+                                need.flag
+                            )
+
+                        }
+                    }else{
+                        val result = GsonFactory.format<BaseResponse<T>>(body,
+                            object : TypeToken<BaseResponse<T>>() {}.type
+                        )
+                        if(result.code == 0 && null != result.data){
+                            CoroutineScope(Dispatchers.Main).launch {
+                                callbackRule.onSuccess(
+                                    result.data!!,
+                                    need.flag
+                                )
+
+                            }
+                        }else{
+                            CoroutineScope(Dispatchers.Main).launch {
+                                callbackRule.onFailed(
+                                    result.msg ?: "数据服务异常，请联系管理员"
+                                )
+                            }
+                        }
                     }
                 } catch (e: Exception) {
                     CoroutineScope(Dispatchers.Main).launch {

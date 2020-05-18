@@ -10,7 +10,7 @@ implementation 'cn.zgy.net:KTHttp:0.0.1
 
 ```
  KTHttp.instance.setBaseUrl("baseUrl").setClientType(Client.FACTORY_CLIENT)
-            .isLogShow(false).setErr("xxx").setNetClientType(NetClientType.HTTPS_TYPE).setTimeOut(5000L).isNeedCookie(false).initHttpClient()
+            .isLogShow(false).isNeedBaseResponse(true).setErr("xxx").setNetClientType(NetClientType.HTTPS_TYPE).setTimeOut(5000L).isNeedCookie(false).initHttpClient()
 ```
 
 
@@ -30,5 +30,19 @@ implementation 'cn.zgy.net:KTHttp:0.0.1
                     hello.text = error
                 }
 
+            })
+```
+
+```
+    KTHttp.instance.Builder().setUrl("/login")
+            .putBody(hashMapOf("username" to "dfadfa", "password" to "dfaf"))
+            .post(object : CallbackRule<LoginBean>{
+                override suspend fun onSuccess(entity: LoginBean, flag: String) {
+
+                }
+
+                override suspend fun onFailed(error: String) {
+                    Log.e(error)
+                }
             })
 ```

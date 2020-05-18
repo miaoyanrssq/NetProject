@@ -21,6 +21,6 @@ class MyApplication : Application() {
     fun initOkHttp(context: Context) {
 
         KTHttp.instance.setBaseUrl("https://mmadmin.tmuyun.com").setClientType(Client.FACTORY_CLIENT)
-            .isLogShow(false).setErr("xxx").setNetClientType(NetClientType.HTTPS_TYPE).setTimeOut(5000L).isNeedCookie(false).initHttpClient()
+            .isLogShow(false).isNeedBaseResponse(true).setErr("xxx").setNetClientType(NetClientType.HTTPS_TYPE).setTimeOut(5000L).isNeedCookie(false).initHttpClient()
     }
 }
