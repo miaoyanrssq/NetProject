@@ -23,6 +23,7 @@ import cn.zgy.net.callback.DownloadCallback
 import cn.zgy.net.callback.KTCallback
 import cn.zgy.net.callback.KTStringCallback
 import cn.zgy.net.callback.TestCallback
+import cn.zgy.net.ui.LoadingDialog
 import com.google.gson.Gson
 import com.stormkid.okhttpkt.rule.*
 import com.stormkid.okhttpkt.utils.CallbackNeed
@@ -325,7 +326,7 @@ class KTHttp private constructor(){
 
     }
 
-    inner class Builder{
+    inner class Builder(){
         private val data = BuildData()
 
         /**
@@ -384,48 +385,60 @@ class KTHttp private constructor(){
             data.params.putAll(params)
         }
 
+        fun setDialog(dialog: LoadingDialog) = apply {
+            data.dialog = dialog
+        }
 
         ////////////////////////////////请求返回 String 数据////////////////////////////////////////
         fun getString(callback: StringCallback){
-            requestInit(data, GET)?.enqueue(KTStringCallback(callback, CallbackNeed(data.flag, error, false)))
+            data.dialog?.show()
+            requestInit(data, GET)?.enqueue(KTStringCallback(callback, CallbackNeed(data.flag, error, false, data.dialog)))
         }
         fun postString(callback: StringCallback) {
-            requestInit(data, POST_FORM)?.enqueue(KTStringCallback(callback, CallbackNeed(data.flag, error, false)))
+            data.dialog?.show()
+            requestInit(data, POST_FORM)?.enqueue(KTStringCallback(callback, CallbackNeed(data.flag, error, false, data.dialog)))
         }
 
         fun postStringJson(callback: StringCallback) {
-            requestInit(data, POST_JSON)?.enqueue(KTStringCallback(callback, CallbackNeed(data.flag, error, false)))
+            data.dialog?.show()
+            requestInit(data, POST_JSON)?.enqueue(KTStringCallback(callback, CallbackNeed(data.flag, error, false, data.dialog)))
         }
 
         fun postStringJson(json: String, callback: StringCallback) {
+            data.dialog?.show()
             data.json = json
-            requestInit(data, POST_JSON)?.enqueue(KTStringCallback(callback, CallbackNeed(data.flag, error, false)))
+            requestInit(data, POST_JSON)?.enqueue(KTStringCallback(callback, CallbackNeed(data.flag, error, false, data.dialog)))
         }
 
         ////////////////////////////////////////////普通请求///////////////////////////////////////////////////////
 
         fun <T> get(callback: CallbackRule<T>) {
-            requestInit(data, GET)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, isNeedBase)))
+            data.dialog?.show()
+            requestInit(data, GET)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, isNeedBase, data.dialog)))
         }
 
         fun <T> post(callback: CallbackRule<T>) {
-            requestInit(data, POST_FORM)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, isNeedBase)))
+            data.dialog?.show()
+            requestInit(data, POST_FORM)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, isNeedBase, data.dialog)))
         }
 
         fun <T> postJson(callback: CallbackRule<T>) {
-            requestInit(data, POST_JSON)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, isNeedBase)))
+            data.dialog?.show()
+            requestInit(data, POST_JSON)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, isNeedBase, data.dialog)))
         }
 
         fun <T> postJson(json: String, callback: CallbackRule<T>) {
+            data.dialog?.show()
             data.json = json
-            requestInit(data, POST_JSON)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, isNeedBase)))
+            requestInit(data, POST_JSON)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, isNeedBase, data.dialog)))
         }
 
         /**
          * 直传文件
          */
         fun <T> postFile(callback: CallbackRule<T>) {
-            requestInit(data, FILE_UPLOAD)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, false)))
+            data.dialog?.show()
+            requestInit(data, FILE_UPLOAD)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, false, data.dialog)))
 
         }
 

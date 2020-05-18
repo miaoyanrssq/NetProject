@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import cn.zgy.net.KTHttp
 import cn.zgy.net.callback.BaseResponse
+import cn.zgy.net.ui.LoadingDialog
 import com.stormkid.okhttpkt.rule.CallbackRule
 import com.stormkid.okhttpkt.utils.Log
 import kotlinx.android.synthetic.main.activity_main.*
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity() {
 //
 //            })
         KTHttp.instance.Builder().setUrl("/login")
+            .setDialog(LoadingDialog(this))
             .putBody(hashMapOf("username" to "dfadfa", "password" to "dfaf"))
             .post(object : CallbackRule<LoginBean>{
                 override suspend fun onSuccess(entity: LoginBean, flag: String) {

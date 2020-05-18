@@ -25,7 +25,10 @@ import java.lang.reflect.ParameterizedType
 open class KTCallback<T>(private val callbackRule: CallbackRule<T>, private val need: CallbackNeed) :
     Callback {
     override fun onFailure(call: Call, e: IOException) {
-        CoroutineScope(Dispatchers.Main).launch { callbackRule.onFailed(need.err_msg) }
+        CoroutineScope(Dispatchers.Main).launch {
+            callbackRule.onFailed(need.err_msg)
+        }
+        need.dialog?.dismiss()
     }
 
     override fun onResponse(call: Call, response: Response) {
@@ -50,7 +53,6 @@ open class KTCallback<T>(private val callbackRule: CallbackRule<T>, private val 
                                 result,
                                 need.flag
                             )
-
                         }
                     }else{
                         val result = GsonFactory.format<BaseResponse<T>>(body,
@@ -62,7 +64,6 @@ open class KTCallback<T>(private val callbackRule: CallbackRule<T>, private val 
                                     result.data!!,
                                     need.flag
                                 )
-
                             }
                         }else{
                             CoroutineScope(Dispatchers.Main).launch {
@@ -89,6 +90,7 @@ open class KTCallback<T>(private val callbackRule: CallbackRule<T>, private val 
                 )
             }
         }
+        need.dialog?.dismiss()
         call.cancel()
     }
 

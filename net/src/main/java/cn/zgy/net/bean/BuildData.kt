@@ -1,5 +1,6 @@
 package cn.zgy.net.bean
 
+import cn.zgy.net.ui.LoadingDialog
 import java.io.File
 
 /**
@@ -13,5 +14,8 @@ data class BuildData(
     var file: File = File(""),
     var filePath: String = "",
     var fileNameKey: String = "file",
-    var flag: String = ""
+    var flag: String = "",
+    var dialog: LoadingDialog? = null
+
+
 )
