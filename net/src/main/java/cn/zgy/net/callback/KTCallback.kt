@@ -1,5 +1,6 @@
 package cn.zgy.net.callback
 
+import cn.zgy.net.utils.GenericUtils
 import com.google.gson.reflect.TypeToken
 import com.stormkid.okhttpkt.rule.CallbackRule
 import com.stormkid.okhttpkt.utils.CallbackNeed
@@ -55,8 +56,16 @@ open class KTCallback<T>(private val callbackRule: CallbackRule<T>, private val 
                             )
                         }
                     }else{
+//                        val result = GsonFactory.format<BaseResponse<T>>(body,
+//                            object : TypeToken<BaseResponse<T>>() {}.type
+//                        )
+                        /**
+                         * 直接使用上面注释方法，获取BaseResponse<T>的type，无法获取到T的类型，解析后返回的是LinkedTreeMap，
+                         * 通过TypeToken.getParameterized(BaseResponse<T>()::class.java, GenericUtils.getGenericType(callbackRule.javaClass)).type
+                         * 来确定T的类型，然后解析，才能得到正确的数据结构
+                         */
                         val result = GsonFactory.format<BaseResponse<T>>(body,
-                            object : TypeToken<BaseResponse<T>>() {}.type
+                            TypeToken.getParameterized(BaseResponse<T>()::class.java, GenericUtils.getGenericType(callbackRule.javaClass)).type
                         )
                         if(result.code == 0 && null != result.data){
                             CoroutineScope(Dispatchers.Main).launch {
@@ -78,6 +87,7 @@ open class KTCallback<T>(private val callbackRule: CallbackRule<T>, private val 
                         callbackRule.onFailed(
                             "数据服务异常，请联系管理员"
                         )
+                        need.dialog?.dismiss()
                     }
                     return
                 }

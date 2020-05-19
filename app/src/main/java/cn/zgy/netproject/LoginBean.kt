@@ -2,7 +2,9 @@ package cn.zgy.netproject
 
 import java.io.Serializable
 
-data class LoginBean(var user: LoginUser? = null) : Serializable
+data class LoginBean(var user: LoginUser? = null,
+                     var productes: List<Product>? = null,
+                     var organizations: List<Organization>? = null) : Serializable
 
 data class LoginUser(var userName: String? = null,
                      var trueName: String? = null,
@@ -19,9 +21,8 @@ data class LoginUser(var userName: String? = null,
                      var id: Long = 0,
                      var createdBy: String? = null,
                      var updatedBy: String? = null,
-                     var isMcAdmin: Int = 0,
-                     var productes: List<Product>? = null,
-                     var organizations: List<Organization>? = null) : Serializable
+                     var isMcAdmin: Int = 0
+                     ) : Serializable
 
 data class Product(var id: Long = 0,
                    var siteName: String? = null): Serializable

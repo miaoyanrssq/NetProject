@@ -34,10 +34,15 @@ class MainActivity : AppCompatActivity() {
 //                }
 //
 //            })
-        KTHttp.instance.Builder().setUrl("/login")
+        KTHttp.instance.Builder().setUrl("/endpoint/live/ids/login")
             .setDialog(LoadingDialog(this))
-            .putBody(hashMapOf("username" to "dfadfa", "password" to "dfaf"))
-            .post(object : CallbackRule<LoginBean>{
+            .putBody(
+                hashMapOf(
+                    "userName" to "59_zjrb",
+                    "passWord" to "WVdSdGFXND19TFJtSGo4UDJEaw=="
+                )
+            )
+            .post(object : CallbackRule<LoginBean> {
                 override suspend fun onSuccess(entity: LoginBean, flag: String) {
 
                 }
@@ -46,5 +51,7 @@ class MainActivity : AppCompatActivity() {
                     Log.e(error)
                 }
             })
+
+
     }
 }

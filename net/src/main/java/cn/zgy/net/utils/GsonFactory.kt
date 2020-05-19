@@ -32,6 +32,10 @@ object GsonFactory{
         return gson.fromJson(json, type)
     }
 
+    fun <T> format(json: String, clazz: Class<T>): T {
+        return gson.fromJson(json, clazz)
+    }
+
     fun toJson(body:Any)=let {
         gson.toJson(body)
     }
