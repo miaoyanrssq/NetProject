@@ -60,13 +60,13 @@ class MainActivity : AppCompatActivity() {
     private fun test2() {
         KTHttp.instance.Builder()
             .setUrl("/endpoint/live/user/selectProductOrGroup")
-            .putBody(
+            .setParams(
                 hashMapOf(
                     "type" to "1",
-                    "typdId" to "4157534840580"
+                    "typeId" to "4157534840580"
                 )
             )
-            .post(object : CallbackRule<String> {
+            .get(object : CallbackRule<String> {
                 override suspend fun onFailed(error: String) {
                 }
 

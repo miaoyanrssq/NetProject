@@ -189,9 +189,9 @@ class KTHttp private constructor(){
         var result = StringBuilder()
         map.forEach{
             if(isFirlst){
-                result.append("?").append(it.key).append("?").append(it.value)
-            }else{
+                result.append("?").append(it.key).append("=").append(it.value)
                 isFirlst = false
+            }else{
                 result.append("&").append(it.key).append("=").append(it.value)
             }
         }
