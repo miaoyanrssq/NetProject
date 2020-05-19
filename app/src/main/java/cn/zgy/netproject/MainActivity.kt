@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
             )
             .post(object : CallbackRule<LoginBean> {
                 override suspend fun onSuccess(entity: LoginBean, flag: String) {
-
+                    test2()
                 }
 
                 override suspend fun onFailed(error: String) {
@@ -53,5 +53,25 @@ class MainActivity : AppCompatActivity() {
             })
 
 
+
+
+    }
+
+    private fun test2() {
+        KTHttp.instance.Builder()
+            .setUrl("/endpoint/live/user/selectProductOrGroup")
+            .putBody(
+                hashMapOf(
+                    "type" to "1",
+                    "typdId" to "4157534840580"
+                )
+            )
+            .post(object : CallbackRule<String> {
+                override suspend fun onFailed(error: String) {
+                }
+
+                override suspend fun onSuccess(entity: String, flag: String) {
+                }
+            })
     }
 }

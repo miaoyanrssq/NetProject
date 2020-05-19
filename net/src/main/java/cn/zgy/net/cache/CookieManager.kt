@@ -21,7 +21,7 @@ class CookieManager private constructor() : CookieRule {
     }
 
     override fun add(httpUrl: HttpUrl, cookie: Cookie) {
-        if (!cookie.persistent) return
+//        if (!cookie.persistent) return
         val hostKey = doHost(httpUrl)
         val nameKey = doName(cookie) ?: return
         if (!cookies.containsKey(hostKey)) {
