@@ -1,7 +1,7 @@
-package com.stormkid.okhttpkt.asyc
+package cn.zgy.net.manager
 
-import com.stormkid.okhttpkt.rule.ProGressRule
-import com.stormkid.okhttpkt.utils.FileCallbackNeed
+import cn.zgy.net.rule.ProGressRule
+import cn.zgy.net.utils.FileCallbackNeed
 import kotlinx.coroutines.*
 import okhttp3.Call
 import okhttp3.Callback
@@ -17,7 +17,8 @@ import java.io.IOException
  */
 
 class DownloadManager(private val fileCallbackNeed: FileCallbackNeed,
-                         private val proGressRule: ProGressRule) : Callback {
+                      private val proGressRule: ProGressRule
+) : Callback {
     override fun onFailure(call: Call, e: IOException) {
 
     }

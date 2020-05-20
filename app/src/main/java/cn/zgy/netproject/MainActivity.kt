@@ -3,10 +3,9 @@ package cn.zgy.netproject
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import cn.zgy.net.KTHttp
-import cn.zgy.net.callback.BaseResponse
 import cn.zgy.net.ui.LoadingDialog
-import com.stormkid.okhttpkt.rule.CallbackRule
-import com.stormkid.okhttpkt.utils.Log
+import cn.zgy.net.rule.CallbackRule
+import cn.zgy.net.utils.Log
 import kotlinx.android.synthetic.main.activity_main.*
 
 

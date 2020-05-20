@@ -1,4 +1,4 @@
-package com.stormkid.okhttpkt.rule
+package cn.zgy.net.rule
 
 import android.content.BroadcastReceiver
 import android.net.Uri

@@ -1,4 +1,4 @@
-package com.stormkid.okhttpkt.rule
+package cn.zgy.net.rule
 
 /**
  * 网络框架回调约束

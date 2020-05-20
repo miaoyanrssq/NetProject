@@ -1,10 +1,9 @@
 package cn.zgy.net.callback
 
-import com.stormkid.okhttpkt.rule.TestCallbackRule
+import cn.zgy.net.rule.TestCallbackRule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response

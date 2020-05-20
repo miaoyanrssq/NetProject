@@ -1,4 +1,4 @@
-package com.stormkid.okhttpkt.utils
+package cn.zgy.net.utils
 
 import com.google.gson.GsonBuilder
 import java.lang.reflect.Type

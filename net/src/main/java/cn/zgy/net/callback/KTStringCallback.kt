@@ -1,7 +1,7 @@
 package cn.zgy.net.callback
 
 import com.stormkid.okhttpkt.rule.StringCallback
-import com.stormkid.okhttpkt.utils.CallbackNeed
+import cn.zgy.net.utils.CallbackNeed
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

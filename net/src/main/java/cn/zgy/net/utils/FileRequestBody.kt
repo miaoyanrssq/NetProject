@@ -1,10 +1,9 @@
-package com.stormkid.okhttpkt.utils
+package cn.zgy.net.utils
 
-import com.stormkid.okhttpkt.rule.ProGressRule
+import cn.zgy.net.rule.ProGressRule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import okio.*

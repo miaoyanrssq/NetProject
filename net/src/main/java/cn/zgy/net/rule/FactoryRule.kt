@@ -1,4 +1,4 @@
-package com.stormkid.okhttpkt.rule
+package cn.zgy.net.rule
 
 import javax.net.SocketFactory
 import javax.net.ssl.SSLSocketFactory
@@ -10,11 +10,11 @@ interface FactoryRule {
 
 //    fun addNetworkInterceptor(interceptor: Interceptor):FactoryRule
 
-    fun writeTimeOut(time:Long):FactoryRule
+    fun writeTimeOut(time:Long): FactoryRule
 
-    fun socketFactory(socketFactory: SocketFactory):FactoryRule
+    fun socketFactory(socketFactory: SocketFactory): FactoryRule
 
-    fun SSLSocketFactory(sslSocketFactory: SSLSocketFactory,x509TrustManager: X509TrustManager):FactoryRule
+    fun SSLSocketFactory(sslSocketFactory: SSLSocketFactory,x509TrustManager: X509TrustManager): FactoryRule
 
 //    fun dns(dns: Dns):FactoryRule
 
@@ -24,7 +24,7 @@ interface FactoryRule {
 
     fun setCookie(isNeed: Boolean): FactoryRule
 
-    fun setFollowRedirects(allowRedirect: Boolean):FactoryRule
+    fun setFollowRedirects(allowRedirect: Boolean): FactoryRule
 
-    fun cleanInterceptor():FactoryRule
+    fun cleanInterceptor(): FactoryRule
 }

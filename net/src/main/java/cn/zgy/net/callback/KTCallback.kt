@@ -2,9 +2,9 @@ package cn.zgy.net.callback
 
 import cn.zgy.net.utils.GenericUtils
 import com.google.gson.reflect.TypeToken
-import com.stormkid.okhttpkt.rule.CallbackRule
-import com.stormkid.okhttpkt.utils.CallbackNeed
-import com.stormkid.okhttpkt.utils.GsonFactory
+import cn.zgy.net.rule.CallbackRule
+import cn.zgy.net.utils.CallbackNeed
+import cn.zgy.net.utils.GsonFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

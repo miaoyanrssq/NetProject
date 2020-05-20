@@ -1,4 +1,4 @@
-package com.stormkid.okhttpkt.utils
+package cn.zgy.net.utils
 
 import android.content.Context
 import cn.zgy.net.ui.LoadingDialog

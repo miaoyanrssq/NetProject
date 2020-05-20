@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import cn.zgy.net.KTHttp
-import com.stormkid.okhttpkt.rule.DownLoadRule
+import cn.zgy.net.rule.DownLoadRule
 
 
 /**

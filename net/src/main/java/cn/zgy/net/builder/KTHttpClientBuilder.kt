@@ -1,11 +1,11 @@
 package cn.zgy.net.builder
 
 import cn.zgy.net.utils.HttpsUtils
-import com.stormkid.okhttpkt.cache.CookieCaches
-import com.stormkid.okhttpkt.cache.CookieManager
-import com.stormkid.okhttpkt.rule.ClientRule
-import com.stormkid.okhttpkt.rule.FactoryRule
-import com.stormkid.okhttpkt.utils.Log
+import cn.zgy.net.cache.CookieCaches
+import cn.zgy.net.cache.CookieManager
+import cn.zgy.net.rule.ClientRule
+import cn.zgy.net.rule.FactoryRule
+import cn.zgy.net.utils.Log
 import okhttp3.*
 import okhttp3.Headers.Companion.toHeaders
 import okhttp3.logging.HttpLoggingInterceptor

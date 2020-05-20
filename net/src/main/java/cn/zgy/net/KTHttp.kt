@@ -23,12 +23,13 @@ import cn.zgy.net.callback.DownloadCallback
 import cn.zgy.net.callback.KTCallback
 import cn.zgy.net.callback.KTStringCallback
 import cn.zgy.net.callback.TestCallback
+import cn.zgy.net.rule.*
 import cn.zgy.net.ui.LoadingDialog
 import com.google.gson.Gson
 import com.stormkid.okhttpkt.rule.*
-import com.stormkid.okhttpkt.utils.CallbackNeed
-import com.stormkid.okhttpkt.utils.FileCallbackNeed
-import com.stormkid.okhttpkt.utils.FileResponseBody
+import cn.zgy.net.utils.CallbackNeed
+import cn.zgy.net.utils.FileCallbackNeed
+import cn.zgy.net.utils.FileResponseBody
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -376,6 +377,12 @@ class KTHttp private constructor(){
             data.fileNameKey = key
         }
 
+        /**
+         * 是否需要解析基类，优先于KTHttp中设置的isNeedBase
+         */
+        fun setNeedBaseResponse(need: Boolean){
+            data.needBaseResponse = need
+        }
 
         /**
          * 传入url拼接属性
@@ -414,23 +421,23 @@ class KTHttp private constructor(){
 
         fun <T> get(callback: CallbackRule<T>) {
             data.dialog?.show()
-            requestInit(data, GET)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, isNeedBase, data.dialog)))
+            requestInit(data, GET)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, data.needBaseResponse ?: isNeedBase, data.dialog)))
         }
 
         fun <T> post(callback: CallbackRule<T>) {
             data.dialog?.show()
-            requestInit(data, POST_FORM)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, isNeedBase, data.dialog)))
+            requestInit(data, POST_FORM)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, data.needBaseResponse ?:isNeedBase, data.dialog)))
         }
 
         fun <T> postJson(callback: CallbackRule<T>) {
             data.dialog?.show()
-            requestInit(data, POST_JSON)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, isNeedBase, data.dialog)))
+            requestInit(data, POST_JSON)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, data.needBaseResponse ?:isNeedBase, data.dialog)))
         }
 
         fun <T> postJson(json: String, callback: CallbackRule<T>) {
             data.dialog?.show()
             data.json = json
-            requestInit(data, POST_JSON)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, isNeedBase, data.dialog)))
+            requestInit(data, POST_JSON)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, data.needBaseResponse ?:isNeedBase, data.dialog)))
         }
 
         /**
@@ -456,7 +463,7 @@ class KTHttp private constructor(){
                 val body = FileResponseBody(response.body!!, fileCallbackNeed, proGressRule)
                 response.newBuilder().body(body).build()
             }.build().newCall(request.build())
-                .enqueue(com.stormkid.okhttpkt.asyc.DownloadManager(fileCallbackNeed, proGressRule))
+                .enqueue(cn.zgy.net.manager.DownloadManager(fileCallbackNeed, proGressRule))
         }
     }
 }

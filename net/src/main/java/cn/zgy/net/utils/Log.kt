@@ -1,4 +1,4 @@
-package com.stormkid.okhttpkt.utils
+package cn.zgy.net.utils
 
 import android.util.Log
 import cn.zgy.net.BuildConfig
@@ -14,11 +14,11 @@ object Log {
     private var isEnable = BuildConfig.LOG_SHOW
 
     fun setEnable(isEnable: Boolean){
-        this.isEnable = isEnable
+        cn.zgy.net.utils.Log.isEnable = isEnable
     }
 
     fun init(isEnable: Boolean){
-        this.isEnable = isEnable
+        cn.zgy.net.utils.Log.isEnable = isEnable
     }
 
     fun w(msg: Any) {

@@ -1,7 +1,7 @@
-package com.stormkid.okhttpkt.utils
+package cn.zgy.net.utils
 
 import android.util.Log
-import com.stormkid.okhttpkt.rule.ProGressRule
+import cn.zgy.net.rule.ProGressRule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,8 +20,9 @@ import java.io.InputStream
 @author ke_li
 @date 2018/7/20
  */
-class FileResponseBody(private val responseBody: ResponseBody,private val fileCallbackNeed:FileCallbackNeed,
-                          private val proGressRule: ProGressRule) : ResponseBody() {
+class FileResponseBody(private val responseBody: ResponseBody, private val fileCallbackNeed: FileCallbackNeed,
+                       private val proGressRule: ProGressRule
+) : ResponseBody() {
     override fun contentLength(): Long= responseBody.contentLength()
 
     override fun contentType(): MediaType? = responseBody.contentType()
