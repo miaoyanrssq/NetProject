@@ -380,7 +380,7 @@ class KTHttp private constructor(){
         /**
          * 是否需要解析基类，优先于KTHttp中设置的isNeedBase
          */
-        fun setNeedBaseResponse(need: Boolean){
+        fun setNeedBaseResponse(need: Boolean) = apply {
             data.needBaseResponse = need
         }
 

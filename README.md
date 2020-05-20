@@ -37,6 +37,7 @@ implementation 'cn.zgy.net:KTHttp:0.0.1
     KTHttp.instance.Builder().setUrl("/login")
             .setDialog(LoadingDialog(this))
             .putBody(hashMapOf("username" to "dfadfa", "password" to "dfaf"))
+            .setNeedBaseResponse(false)
             .post(object : CallbackRule<LoginBean>{
                 override suspend fun onSuccess(entity: LoginBean, flag: String) {
 
