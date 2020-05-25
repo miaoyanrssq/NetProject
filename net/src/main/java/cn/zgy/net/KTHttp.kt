@@ -30,6 +30,7 @@ import com.stormkid.okhttpkt.rule.*
 import cn.zgy.net.utils.CallbackNeed
 import cn.zgy.net.utils.FileCallbackNeed
 import cn.zgy.net.utils.FileResponseBody
+import cn.zgy.net.utils.FileUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -225,8 +226,10 @@ class KTHttp private constructor(){
                 if(data.file.exists()){
                     val body = MultipartBody.Builder().setType(MultipartBody.FORM).apply {
                         data.body.forEach { addFormDataPart(it.key, it.value) }
+                        val mediaType = FileUtils.createMediaType(data.file.name)
                         addFormDataPart(data.fileNameKey, data.file.name,
-                            data.file.asRequestBody(MultipartBody.FORM)
+                            data.file.asRequestBody(mediaType)
+//                            data.file.asRequestBody(MultipartBody.FORM)
                         )
                     }
                     val multipartBody = body.build()
