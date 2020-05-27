@@ -3,6 +3,7 @@ package cn.zgy.netproject
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import cn.zgy.net.KTHttp
+import cn.zgy.net.manager.CallManager
 import cn.zgy.net.ui.LoadingDialog
 import cn.zgy.net.rule.CallbackRule
 import cn.zgy.net.utils.Log
@@ -41,6 +42,7 @@ class MainActivity : AppCompatActivity() {
                     "passWord" to "WVdSdGFXND19TFJtSGo4UDJEaw=="
                 )
             )
+            .setTag("tag")
             .post(object : CallbackRule<LoginBean> {
                 override suspend fun onSuccess(entity: LoginBean, flag: String) {
                     test2()
@@ -50,6 +52,8 @@ class MainActivity : AppCompatActivity() {
                     Log.e(error)
                 }
             })
+        CallManager.cancel("tag")
+
 
 
 

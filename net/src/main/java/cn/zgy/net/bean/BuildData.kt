@@ -16,7 +16,10 @@ data class BuildData(
     var fileNameKey: String = "file",
     var flag: String = "",
     var dialog: LoadingDialog? = null,
-    var needBaseResponse: Boolean? = null
+    var needBaseResponse: Boolean? = null,
+    var tag: Any? = null
+
+
 
 
 )

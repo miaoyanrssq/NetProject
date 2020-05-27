@@ -1,5 +1,6 @@
 package cn.zgy.net.callback
 
+import cn.zgy.net.manager.CallManager
 import cn.zgy.net.utils.GenericUtils
 import com.google.gson.reflect.TypeToken
 import cn.zgy.net.rule.CallbackRule
@@ -26,10 +27,17 @@ import java.lang.reflect.ParameterizedType
 open class KTCallback<T>(private val callbackRule: CallbackRule<T>, private val need: CallbackNeed) :
     Callback {
     override fun onFailure(call: Call, e: IOException) {
+        if(call.isCanceled()){
+            CoroutineScope(Dispatchers.Main).launch {
+                callbackRule.onCancel()
+            }
+        }
         CoroutineScope(Dispatchers.Main).launch {
             callbackRule.onFailed(need.err_msg)
         }
         need.dialog?.dismiss()
+        call.cancel()
+        CallManager.removeCall(need.tag, call)
     }
 
     override fun onResponse(call: Call, response: Response) {
@@ -102,6 +110,7 @@ open class KTCallback<T>(private val callbackRule: CallbackRule<T>, private val 
         }
         need.dialog?.dismiss()
         call.cancel()
+        CallManager.removeCall(need.tag, call)
     }
 
 

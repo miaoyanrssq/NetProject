@@ -2,7 +2,7 @@
 kotlin封装的okhttp,基于okhttp4.6.0
 
 # 引用
-implementation 'cn.zgy.net:KTHttp:0.0.1
+implementation 'cn.zgy.net:KTHttp:0.0.10
 
 # 使用
 
@@ -38,6 +38,7 @@ implementation 'cn.zgy.net:KTHttp:0.0.1
             .setDialog(LoadingDialog(this))
             .putBody(hashMapOf("username" to "dfadfa", "password" to "dfaf"))
             .setNeedBaseResponse(false)
+            .setTag("tag")
             .post(object : CallbackRule<LoginBean>{
                 override suspend fun onSuccess(entity: LoginBean, flag: String) {
 
@@ -47,4 +48,13 @@ implementation 'cn.zgy.net:KTHttp:0.0.1
                     Log.e(error)
                 }
             })
+
+```
+
+取消请求
+
+```
+ KTHttp.instance.cancel("tag")
+ 或者
+ CallManager.cancel("tag")
 ```

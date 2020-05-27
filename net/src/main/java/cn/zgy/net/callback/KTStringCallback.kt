@@ -1,5 +1,6 @@
 package cn.zgy.net.callback
 
+import cn.zgy.net.manager.CallManager
 import com.stormkid.okhttpkt.rule.StringCallback
 import cn.zgy.net.utils.CallbackNeed
 import kotlinx.coroutines.CoroutineScope
@@ -19,6 +20,11 @@ import java.io.IOException
 
 class KTStringCallback(private val callbackRule: StringCallback, private val need: CallbackNeed) : Callback {
     override fun onFailure(call: Call, e: IOException) {
+        if(call.isCanceled()){
+            CoroutineScope(Dispatchers.Main).launch {
+                callbackRule.onCancel()
+            }
+        }
         CoroutineScope(Dispatchers.Main).launch { callbackRule.onFailed(need.err_msg) }
     }
 
@@ -49,5 +55,6 @@ class KTStringCallback(private val callbackRule: StringCallback, private val nee
             }
         }
         call.cancel()
+        CallManager.removeCall(need.tag, call)
     }
 }

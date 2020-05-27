@@ -23,14 +23,15 @@ import cn.zgy.net.callback.DownloadCallback
 import cn.zgy.net.callback.KTCallback
 import cn.zgy.net.callback.KTStringCallback
 import cn.zgy.net.callback.TestCallback
+import cn.zgy.net.manager.CallManager
 import cn.zgy.net.rule.*
 import cn.zgy.net.ui.LoadingDialog
-import com.google.gson.Gson
-import com.stormkid.okhttpkt.rule.*
 import cn.zgy.net.utils.CallbackNeed
 import cn.zgy.net.utils.FileCallbackNeed
 import cn.zgy.net.utils.FileResponseBody
 import cn.zgy.net.utils.FileUtils
+import com.google.gson.Gson
+import com.stormkid.okhttpkt.rule.StringCallback
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,10 +40,11 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
+import java.util.*
+import kotlin.collections.HashMap
 
-class KTHttp private constructor(){
+class KTHttp private constructor() {
     companion object {
-
 
 
         @JvmStatic
@@ -50,6 +52,8 @@ class KTHttp private constructor(){
 
 
     }
+
+    private val mCallMaps: MutableMap<Any, MutableSet<Call?>?> = HashMap()
 
 
     /**
@@ -71,7 +75,8 @@ class KTHttp private constructor(){
     /**
      * 默认为http请求单例对象
      */
-    private var okHttpClient: OkHttpClient = KTHttpClientBuilder.Builder.build().getHttpClient().build()
+    private var okHttpClient: OkHttpClient =
+        KTHttpClientBuilder.Builder.build().getHttpClient().build()
 
 
     /**
@@ -127,11 +132,12 @@ class KTHttp private constructor(){
             COMMOM_TYPE -> okHttpClient = clientRule.getCustomnClient().build()
         }
     }
+
     /**
      * 获取相应的对象
      */
     private fun getHttpClient() = okHttpClient.apply {
-        if(isFactory){
+        if (isFactory) {
             initNetType(KTHttpClientBuilder.Builder.build())
         }
     }
@@ -143,6 +149,7 @@ class KTHttp private constructor(){
     fun initHead(map: HashMap<String, String>) = apply {
         initNetType(KTHttpClientBuilder.Builder.setHead(map).build())
     }
+
     /**
      * 是否需要cookie
      */
@@ -156,6 +163,7 @@ class KTHttp private constructor(){
     fun setTimeOut(time: Long) = apply {
         KTHttpClientBuilder.Builder.build().setTimeOut(time)
     }
+
     /**
      * 是否显示log
      */
@@ -166,7 +174,7 @@ class KTHttp private constructor(){
     /**
      * 是否需要重定向
      */
-    fun isAllowRedirect(isNeed: Boolean) = apply{
+    fun isAllowRedirect(isNeed: Boolean) = apply {
         KTHttpClientBuilder.Builder.build().setFollowRedirects(isNeed)
     }
 
@@ -189,55 +197,56 @@ class KTHttp private constructor(){
     private fun initUrl(map: HashMap<String, String>) = "".let {
         var isFirlst = true
         var result = StringBuilder()
-        map.forEach{
-            if(isFirlst){
+        map.forEach {
+            if (isFirlst) {
                 result.append("?").append(it.key).append("=").append(it.value)
                 isFirlst = false
-            }else{
+            } else {
                 result.append("&").append(it.key).append("=").append(it.value)
             }
         }
         result.toString()
     }
 
-    private fun requestInit(data: BuildData, @RequestType type: String): Call?{
+    private fun requestInit(data: BuildData, @RequestType type: String): Call? {
         val url = data.url + initUrl(data.params)
         val builder = Request.Builder().url(url)
-        return when(type){
-            GET->{
+        return when (type) {
+            GET -> {
                 val request = builder.build()
-                getHttpClient().newCall(request)
+                getHttpClient().newCall(request).also { CallManager.addCall(data.tag, it) }
             }
-            POST_FORM->{
+            POST_FORM -> {
                 val requestBody = FormBody.Builder().apply {
-                    data.body.forEach{
+                    data.body.forEach {
                         add(it.key, it.value)
                     }
                 }.build()
-                getHttpClient().newCall(builder.post(requestBody).build())
+                getHttpClient().newCall(builder.post(requestBody).build()).also { CallManager.addCall(data.tag, it) }
             }
-            POST_JSON->{
+            POST_JSON -> {
                 val json = if (data.json.isEmpty()) Gson().toJson(data.body) else data.json
                 val requestBody =
                     json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-                getHttpClient().newCall(builder.post(requestBody).build())
+                getHttpClient().newCall(builder.post(requestBody).build()).also { CallManager.addCall(data.tag, it) }
             }
-            FILE_UPLOAD->{
-                if(data.file.exists()){
+            FILE_UPLOAD -> {
+                if (data.file.exists()) {
                     val body = MultipartBody.Builder().setType(MultipartBody.FORM).apply {
                         data.body.forEach { addFormDataPart(it.key, it.value) }
                         val mediaType = FileUtils.createMediaType(data.file.name)
-                        addFormDataPart(data.fileNameKey, data.file.name,
+                        addFormDataPart(
+                            data.fileNameKey, data.file.name,
                             data.file.asRequestBody(mediaType)
 //                            data.file.asRequestBody(MultipartBody.FORM)
                         )
                     }
                     val multipartBody = body.build()
                     setTimeOut(60000)
-                    getFactoryClient().newCall(builder.post(multipartBody).build())
-                }else null
+                    getFactoryClient().newCall(builder.post(multipartBody).build()).also { CallManager.addCall(data.tag, it) }
+                } else null
             }
-            else-> null
+            else -> null
         }
     }
 
@@ -245,7 +254,13 @@ class KTHttp private constructor(){
     /**
      * 系统下载器下载文件
      */
-    fun download(url: String, title: String, desc: String, context: Context, downLoadRule: DownLoadRule) = let {
+    fun download(
+        url: String,
+        title: String,
+        desc: String,
+        context: Context,
+        downLoadRule: DownLoadRule
+    ) = let {
         val uri = Uri.parse(url)
         val req = DownloadManager.Request(uri).apply {
             //设置WIFI下进行更新
@@ -265,7 +280,10 @@ class KTHttp private constructor(){
 
         //获取下载任务ID
         val dm = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-        context.registerReceiver(DownloadCallback(downLoadRule), IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+        context.registerReceiver(
+            DownloadCallback(downLoadRule),
+            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+        )
         try {
             dm.enqueue(req)
         } catch (exception: Exception) {
@@ -330,7 +348,7 @@ class KTHttp private constructor(){
 
     }
 
-    inner class Builder(){
+    inner class Builder() {
         private val data = BuildData()
 
         /**
@@ -339,6 +357,7 @@ class KTHttp private constructor(){
         fun setUrl(url: String) = apply {
             data.url = baseUrl + url
         }
+
         /**
          * 输入的全部url
          */
@@ -399,48 +418,117 @@ class KTHttp private constructor(){
             data.dialog = dialog
         }
 
-        ////////////////////////////////请求返回 String 数据////////////////////////////////////////
-        fun getString(callback: StringCallback){
-            data.dialog?.show()
-            requestInit(data, GET)?.enqueue(KTStringCallback(callback, CallbackNeed(data.flag, error, false, data.dialog)))
+        fun setTag(tag: Any) = apply {
+            data.tag = tag
         }
+
+        ////////////////////////////////请求返回 String 数据////////////////////////////////////////
+        fun getString(callback: StringCallback) {
+            data.dialog?.show()
+            requestInit(data, GET)?.enqueue(
+                    KTStringCallback(
+                        callback,
+                        CallbackNeed(data.flag, error, false, data.dialog, data.tag)
+                    )
+                )
+        }
+
         fun postString(callback: StringCallback) {
             data.dialog?.show()
-            requestInit(data, POST_FORM)?.enqueue(KTStringCallback(callback, CallbackNeed(data.flag, error, false, data.dialog)))
+            requestInit(data, POST_FORM)?.enqueue(
+                    KTStringCallback(
+                        callback,
+                        CallbackNeed(data.flag, error, false, data.dialog, data.tag)
+                    )
+                )
         }
 
         fun postStringJson(callback: StringCallback) {
             data.dialog?.show()
-            requestInit(data, POST_JSON)?.enqueue(KTStringCallback(callback, CallbackNeed(data.flag, error, false, data.dialog)))
+            requestInit(data, POST_JSON)?.enqueue(
+                    KTStringCallback(
+                        callback,
+                        CallbackNeed(data.flag, error, false, data.dialog, data.tag)
+                    )
+                )
         }
 
         fun postStringJson(json: String, callback: StringCallback) {
             data.dialog?.show()
             data.json = json
-            requestInit(data, POST_JSON)?.enqueue(KTStringCallback(callback, CallbackNeed(data.flag, error, false, data.dialog)))
+            requestInit(data, POST_JSON)?.enqueue(
+                    KTStringCallback(
+                        callback,
+                        CallbackNeed(data.flag, error, false, data.dialog, data.tag)
+                    )
+                )
         }
 
         ////////////////////////////////////////////普通请求///////////////////////////////////////////////////////
 
         fun <T> get(callback: CallbackRule<T>) {
             data.dialog?.show()
-            requestInit(data, GET)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, data.needBaseResponse ?: isNeedBase, data.dialog)))
+            requestInit(data, GET)?.enqueue(
+                    KTCallback(
+                        callback,
+                        CallbackNeed(
+                            data.flag,
+                            error,
+                            data.needBaseResponse ?: isNeedBase,
+                            data.dialog,
+                            data.tag
+                        )
+                    )
+                )
         }
 
         fun <T> post(callback: CallbackRule<T>) {
             data.dialog?.show()
-            requestInit(data, POST_FORM)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, data.needBaseResponse ?:isNeedBase, data.dialog)))
+            requestInit(data, POST_FORM)?.enqueue(
+                KTCallback(
+                    callback,
+                    CallbackNeed(
+                        data.flag,
+                        error,
+                        data.needBaseResponse ?: isNeedBase,
+                        data.dialog,
+                        data.tag
+                    )
+                )
+            )
         }
 
         fun <T> postJson(callback: CallbackRule<T>) {
             data.dialog?.show()
-            requestInit(data, POST_JSON)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, data.needBaseResponse ?:isNeedBase, data.dialog)))
+            requestInit(data, POST_JSON)?.enqueue(
+                    KTCallback(
+                        callback,
+                        CallbackNeed(
+                            data.flag,
+                            error,
+                            data.needBaseResponse ?: isNeedBase,
+                            data.dialog,
+                            data.tag
+                        )
+                    )
+                )
         }
 
         fun <T> postJson(json: String, callback: CallbackRule<T>) {
             data.dialog?.show()
             data.json = json
-            requestInit(data, POST_JSON)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, data.needBaseResponse ?:isNeedBase, data.dialog)))
+            requestInit(data, POST_JSON)?.enqueue(
+                    KTCallback(
+                        callback,
+                        CallbackNeed(
+                            data.flag,
+                            error,
+                            data.needBaseResponse ?: isNeedBase,
+                            data.dialog,
+                            data.tag
+                        )
+                    )
+                )
         }
 
         /**
@@ -448,20 +536,25 @@ class KTHttp private constructor(){
          */
         fun <T> postFile(callback: CallbackRule<T>) {
             data.dialog?.show()
-            requestInit(data, FILE_UPLOAD)?.enqueue(KTCallback(callback, CallbackNeed(data.flag, error, false, data.dialog)))
+            requestInit(data, FILE_UPLOAD)?.enqueue(
+                    KTCallback(
+                        callback,
+                        CallbackNeed(data.flag, error, false, data.dialog, data.tag)
+                    )
+                )
 
         }
 
         /**
          * 下载文件
          */
-        fun downLoad(context: Context, proGressRule: ProGressRule){
+        fun downLoad(context: Context, proGressRule: ProGressRule) {
             val url = data.url + initUrl(data.params)
             val request = Request.Builder().url(url)
             val fileCallbackNeed = FileCallbackNeed(data.filePath, context, 0)
             CoroutineScope(Dispatchers.Main).launch { proGressRule.onStartRequest() }
             setTimeOut(60000L)
-            getFactoryClient().newBuilder().addNetworkInterceptor{chain ->
+            getFactoryClient().newBuilder().addNetworkInterceptor { chain ->
                 val response = chain.proceed(chain.request())
                 val body = FileResponseBody(response.body!!, fileCallbackNeed, proGressRule)
                 response.newBuilder().body(body).build()
@@ -469,4 +562,12 @@ class KTHttp private constructor(){
                 .enqueue(cn.zgy.net.manager.DownloadManager(fileCallbackNeed, proGressRule))
         }
     }
+
+    /**
+     * 取消tag
+     */
+    fun cancel(tag: Any?) {
+        CallManager.cancel(tag)
+    }
+
 }

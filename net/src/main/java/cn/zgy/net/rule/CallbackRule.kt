@@ -17,4 +17,8 @@ interface CallbackRule <in T>{
      * 请求失败
      */
     suspend fun onFailed(error:String)
+
+     suspend fun onCancel(){
+
+     }
 }
