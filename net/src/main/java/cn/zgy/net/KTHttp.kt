@@ -31,7 +31,7 @@ import cn.zgy.net.utils.FileCallbackNeed
 import cn.zgy.net.utils.FileResponseBody
 import cn.zgy.net.utils.FileUtils
 import com.google.gson.Gson
-import com.stormkid.okhttpkt.rule.StringCallback
+import cn.zgy.net.rule.StringCallback
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,7 +40,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-import java.util.*
 import kotlin.collections.HashMap
 
 class KTHttp private constructor() {

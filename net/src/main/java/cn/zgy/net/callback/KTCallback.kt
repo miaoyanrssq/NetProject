@@ -85,7 +85,7 @@ open class KTCallback<T>(private val callbackRule: CallbackRule<T>, private val 
                         }else{
                             CoroutineScope(Dispatchers.Main).launch {
                                 callbackRule.onFailed(
-                                    result.msg ?: "数据服务异常，请联系管理员"
+                                    result.message ?: "数据服务异常，请联系管理员"
                                 )
                             }
                         }

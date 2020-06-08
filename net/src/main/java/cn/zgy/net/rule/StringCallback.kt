@@ -1,4 +1,4 @@
-package com.stormkid.okhttpkt.rule
+package cn.zgy.net.rule
 
 import cn.zgy.net.rule.CallbackRule
 
