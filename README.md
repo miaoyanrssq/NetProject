@@ -10,7 +10,7 @@ implementation 'cn.zgy.net:KTHttp:0.0.10
 
 ```
  KTHttp.instance.setBaseUrl("baseUrl").setClientType(Client.FACTORY_CLIENT)
-            .isLogShow(false).isNeedBaseResponse(true).setErr("xxx").setNetClientType(NetClientType.HTTPS_TYPE).setTimeOut(5000L).isNeedCookie(false).initHttpClient()
+            .isLogShow(false).isNeedBaseResponse(true).setErr("xxx").setNetClientType(NetClientType.HTTPS_TYPE).setTimeOut(5000L).setCookie(CookieCaches(CookieManager.getInstance(this))).initHttpClient()
 ```
 
 

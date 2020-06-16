@@ -1,5 +1,6 @@
 package cn.zgy.net.rule
 
+import okhttp3.CookieJar
 import okhttp3.OkHttpClient
 
 /**
@@ -12,6 +13,6 @@ interface ClientRule {
     fun getCustomnClient():OkHttpClient.Builder
     fun setTimeOut(time:Long)
     fun isLogShow(boolean: Boolean)
-    fun isNeedCookie(isNeed:Boolean)
+    fun setCookie(cookieJar: CookieJar?):OkHttpClient.Builder
     fun setFollowRedirects(allowRedirect: Boolean)
 }

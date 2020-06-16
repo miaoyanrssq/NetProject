@@ -149,11 +149,10 @@ class KTHttp private constructor() {
         initNetType(KTHttpClientBuilder.Builder.setHead(map).build())
     }
 
-    /**
-     * 是否需要cookie
-     */
-    fun isNeedCookie(isNeed: Boolean) = apply {
-        KTHttpClientBuilder.Builder.build().isNeedCookie(isNeed)
+
+
+    fun setCookie(cookieJar: CookieJar?) = apply {
+        KTHttpClientBuilder.Builder.build().setCookie(cookieJar)
     }
 
     /**

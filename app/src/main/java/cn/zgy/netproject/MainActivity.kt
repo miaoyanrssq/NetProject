@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
                     Log.e(error)
                 }
             })
-        CallManager.cancel("tag")
+//        CallManager.cancel("tag")
 
 
 

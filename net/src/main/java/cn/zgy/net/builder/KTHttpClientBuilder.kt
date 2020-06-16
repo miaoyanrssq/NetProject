@@ -1,5 +1,6 @@
 package cn.zgy.net.builder
 
+import android.content.Context
 import cn.zgy.net.utils.HttpsUtils
 import cn.zgy.net.cache.CookieCaches
 import cn.zgy.net.cache.CookieManager
@@ -45,6 +46,7 @@ class KTHttpClientBuilder private constructor() : ClientRule {
         private val heads = hashMapOf<String, String>()
         private var showLog = false
         private val instance: KTHttpClientBuilder by lazy { KTHttpClientBuilder() }
+//        fun getInstance(context: Context) = KTHttpClientBuilder(context.applicationContext)
     }
 
     /**
@@ -83,9 +85,9 @@ class KTHttpClientBuilder private constructor() : ClientRule {
         /**
          * 添加cookie
          */
-        override fun setCookie(isNeed: Boolean) = apply {
-            if (isNeed) {
-                httpClient.cookieJar(CookieCaches(CookieManager.instance))
+        override fun setCookie(cookieJar: CookieJar?) = apply {
+            if (cookieJar != null) {
+                httpClient.cookieJar(cookieJar)
             }
         }
         /**
@@ -164,7 +166,7 @@ class KTHttpClientBuilder private constructor() : ClientRule {
                 Log.setEnable(false)
             }
 
-        if (IS_NEED_COOKIE) httpClient.cookieJar(CookieCaches(CookieManager.instance))
+//        if (IS_NEED_COOKIE) httpClient.cookieJar(CookieCaches(CookieManager.getInstance(context)))
         followRedirects(IS_REDIRECT_ALLOW)
         connectTimeout(ERR_TIME, TimeUnit.MILLISECONDS)
         readTimeout(ERR_TIME, TimeUnit.MILLISECONDS)
@@ -195,11 +197,11 @@ class KTHttpClientBuilder private constructor() : ClientRule {
     override fun isLogShow(isShow: Boolean) {
         showLog = isShow
     }
-    /**
-     * 是否需要cookie
-     */
-    override fun isNeedCookie(isNeed: Boolean) {
-        IS_NEED_COOKIE = isNeed
+
+    override fun setCookie(cookieJar: CookieJar?) = httpClient.apply {
+        if(cookieJar != null) {
+            httpClient.cookieJar(cookieJar)
+        }
     }
 
     /**

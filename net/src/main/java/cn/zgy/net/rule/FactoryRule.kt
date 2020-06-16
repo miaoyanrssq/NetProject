@@ -1,5 +1,6 @@
 package cn.zgy.net.rule
 
+import okhttp3.CookieJar
 import javax.net.SocketFactory
 import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.X509TrustManager
@@ -22,7 +23,7 @@ interface FactoryRule {
 
     fun setTimeOut(time: Long): FactoryRule
 
-    fun setCookie(isNeed: Boolean): FactoryRule
+    fun setCookie(cookieJar: CookieJar?): FactoryRule
 
     fun setFollowRedirects(allowRedirect: Boolean): FactoryRule
 

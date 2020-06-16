@@ -5,6 +5,8 @@ import android.content.Context
 import cn.zgy.net.KTHttp
 import cn.zgy.net.annptation.Client
 import cn.zgy.net.annptation.NetClientType
+import cn.zgy.net.cache.CookieCaches
+import cn.zgy.net.cache.CookieManager
 
 class MyApplication : Application() {
 
@@ -22,7 +24,8 @@ class MyApplication : Application() {
 
         KTHttp.instance.setBaseUrl("http://testmc.tmuyun.com")
             .isLogShow(false).isNeedBaseResponse(true).setErr("xxx")
-            .setNetClientType(NetClientType.HTTPS_TYPE).setTimeOut(5000L).isNeedCookie(true)
+            .setNetClientType(NetClientType.HTTPS_TYPE).setTimeOut(5000L).setCookie(CookieCaches(
+                CookieManager.getInstance(this)))
             .initHttpClient()
     }
 }
