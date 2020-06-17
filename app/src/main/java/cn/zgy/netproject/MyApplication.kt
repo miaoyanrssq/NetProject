@@ -25,7 +25,7 @@ class MyApplication : Application() {
         KTHttp.instance.setBaseUrl("http://testmc.tmuyun.com")
             .isLogShow(false).isNeedBaseResponse(true).setErr("xxx")
             .setNetClientType(NetClientType.HTTPS_TYPE).setTimeOut(5000L).setCookie(CookieCaches(
-                CookieManager.getInstance(this)))
+                CookieManager.getInstance(this), null))
             .initHttpClient()
     }
 }

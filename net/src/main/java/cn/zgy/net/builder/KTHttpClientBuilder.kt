@@ -1,11 +1,8 @@
 package cn.zgy.net.builder
 
-import android.content.Context
-import cn.zgy.net.utils.HttpsUtils
-import cn.zgy.net.cache.CookieCaches
-import cn.zgy.net.cache.CookieManager
 import cn.zgy.net.rule.ClientRule
 import cn.zgy.net.rule.FactoryRule
+import cn.zgy.net.utils.HttpsUtils
 import cn.zgy.net.utils.Log
 import okhttp3.*
 import okhttp3.Headers.Companion.toHeaders
@@ -14,6 +11,7 @@ import java.util.concurrent.TimeUnit
 import javax.net.SocketFactory
 import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.X509TrustManager
+
 /**
   *
   * @Description:     配置
