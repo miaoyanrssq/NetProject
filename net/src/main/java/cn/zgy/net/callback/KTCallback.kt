@@ -24,10 +24,13 @@ import java.lang.reflect.ParameterizedType
  * @Version:        1.0
  */
 
-open class KTCallback<T>(private val callbackRule: CallbackRule<T>, private val need: CallbackNeed) :
+open class KTCallback<T>(
+    private val callbackRule: CallbackRule<T>,
+    private val need: CallbackNeed
+) :
     Callback {
     override fun onFailure(call: Call, e: IOException) {
-        if(call.isCanceled()){
+        if (call.isCanceled()) {
             CoroutineScope(Dispatchers.Main).launch {
                 callbackRule.onCancel()
             }
@@ -53,7 +56,7 @@ open class KTCallback<T>(private val callbackRule: CallbackRule<T>, private val 
                 val body = response.body?.string() ?: ""
                 try {
 
-                    if(!need.needBase) {
+                    if (!need.needBase) {
                         val interfacesTypes = callbackRule.javaClass.genericInterfaces[0]
                         val resultType = (interfacesTypes as ParameterizedType).actualTypeArguments
                         val result = GsonFactory.format<T>(body, resultType[0])
@@ -63,7 +66,7 @@ open class KTCallback<T>(private val callbackRule: CallbackRule<T>, private val 
                                 need.flag
                             )
                         }
-                    }else{
+                    } else {
 //                        val result = GsonFactory.format<BaseResponse<T>>(body,
 //                            object : TypeToken<BaseResponse<T>>() {}.type
 //                        )
@@ -72,17 +75,21 @@ open class KTCallback<T>(private val callbackRule: CallbackRule<T>, private val 
                          * 通过TypeToken.getParameterized(BaseResponse<T>()::class.java, GenericUtils.getGenericType(callbackRule.javaClass)).type
                          * 来确定T的类型，然后解析，才能得到正确的数据结构
                          */
-                        val result = GsonFactory.format<BaseResponse<T>>(body,
-                            TypeToken.getParameterized(BaseResponse<T>()::class.java, GenericUtils.getGenericType(callbackRule.javaClass)).type
+                        val result = GsonFactory.format<BaseResponse<T>>(
+                            body,
+                            TypeToken.getParameterized(
+                                BaseResponse<T>()::class.java,
+                                GenericUtils.getGenericType(callbackRule.javaClass)
+                            ).type
                         )
-                        if(result.code == 0 && null != result.data){
+                        if (result.code == 0 && null != result.data) {
                             CoroutineScope(Dispatchers.Main).launch {
                                 callbackRule.onSuccess(
                                     result.data!!,
                                     need.flag
                                 )
                             }
-                        }else{
+                        } else {
                             CoroutineScope(Dispatchers.Main).launch {
                                 callbackRule.onFailed(
                                     result.message ?: "数据服务异常，请联系管理员"
@@ -102,13 +109,16 @@ open class KTCallback<T>(private val callbackRule: CallbackRule<T>, private val 
 
             }
         } else {
-            CoroutineScope(Dispatchers.Main).launch{
+            CoroutineScope(Dispatchers.Main).launch {
                 callbackRule.onFailed(
                     response.message
                 )
             }
         }
-        need.dialog?.dismiss()
+        CoroutineScope(Dispatchers.Main).launch {
+            need.dialog?.dismiss()
+        }
+
         call.cancel()
         CallManager.removeCall(need.tag, call)
     }

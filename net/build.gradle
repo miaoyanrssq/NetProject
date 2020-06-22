@@ -56,7 +56,7 @@ publish {
     userOrg = 'miaoyanrssq' // bintray 上注册的用户名
     groupId = 'cn.zgy.net' // 包名
     artifactId = 'KTHttp' // library名
-    publishVersion = '0.0.14' // 版本号
+    publishVersion = '0.0.16' // 版本号
     desc = 'kotlin封装okhttp'
     website = 'https://github.com/miaoyanrssq/NetProject'
 }
