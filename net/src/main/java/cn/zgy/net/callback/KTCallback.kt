@@ -38,7 +38,9 @@ open class KTCallback<T>(
         CoroutineScope(Dispatchers.Main).launch {
             callbackRule.onFailed(need.err_msg)
         }
-        need.dialog?.dismiss()
+        CoroutineScope(Dispatchers.Main).launch {
+            need.dialog?.dismiss()
+        }
         call.cancel()
         CallManager.removeCall(need.tag, call)
     }
@@ -102,7 +104,6 @@ open class KTCallback<T>(
                         callbackRule.onFailed(
                             "数据服务异常，请联系管理员"
                         )
-                        need.dialog?.dismiss()
                     }
                     return
                 }
@@ -115,10 +116,10 @@ open class KTCallback<T>(
                 )
             }
         }
+
         CoroutineScope(Dispatchers.Main).launch {
             need.dialog?.dismiss()
         }
-
         call.cancel()
         CallManager.removeCall(need.tag, call)
     }
